@@ -21,7 +21,9 @@ jobs:
           workflow: upload.yml
           name: videos.json
           path: .
-      - run: node src/scrape/scrape.js
+      - name: Run scrape.js
+        if: success() || failure()
+        run: node src/scrape/scrape.js
       - name: Upload videos/*
         uses: actions/upload-artifact@v3
         with:
