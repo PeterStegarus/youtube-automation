@@ -20,6 +20,7 @@ jobs:
           workflow: upload.yml
           name: videos.json
           path: .
+          check_artifacts: true
       - run: node src/scrape/scrape.js
       - name: Upload videos/*
         uses: actions/upload-artifact@v3
