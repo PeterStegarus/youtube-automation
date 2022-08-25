@@ -10,7 +10,7 @@ const CATEGORIES_NAMES = JSON.parse(process.env.CATEGORIES);
 const SCRAPE_DATA_PATH = './videos.json';
 const SESSIONS_LIST = ['sid_tt=asdasd13123123123adasda;'];
 
-let scrapeData = { scrapeNumber: 4, videos: [] }
+let scrapeData = { scrapeNumber: 1, videos: [] }
 if (fs.existsSync(SCRAPE_DATA_PATH))
     scrapeData = JSON.parse(fs.readFileSync(SCRAPE_DATA_PATH));
 
