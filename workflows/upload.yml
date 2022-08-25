@@ -24,4 +24,4 @@ jobs:
           workflow: scrape.yml
           name: videos.json
           path: .
-      - run: node upload.js
+      - run: node src/upload/upload.js
