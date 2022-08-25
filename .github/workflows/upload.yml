@@ -1,6 +1,9 @@
 name: Upload
 on:
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Scrape"]
+    types:
+      - completed
 jobs:
   upload:
     name: Upload
@@ -25,3 +28,8 @@ jobs:
           name: videos.json
           path: .
       - run: node src/upload/upload.js
+      - name: Upload videos.json
+        uses: actions/upload-artifact@v3
+        with:
+          name: videos.json
+          path: videos.json

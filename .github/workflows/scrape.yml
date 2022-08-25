@@ -17,10 +17,9 @@ jobs:
       - name: Download videos.json
         uses: dawidd6/action-download-artifact@v2
         with:
-          workflow: scrape.yml
+          workflow: upload.yml
           name: videos.json
           path: .
-          check-artifacts: true
       - run: node src/scrape/scrape.js
       - name: Upload videos/*
         uses: actions/upload-artifact@v3
