@@ -1,0 +1,27 @@
+name: Upload
+on:
+  workflow_dispatch:
+jobs:
+  upload:
+    name: Upload
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: actions/setup-node@main
+        with:
+          node-version: 16
+          cache: 'npm'
+      - run: npm ci
+      - name: Download videos
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: scrape.yml
+          name: scraped-videos
+          path: videos
+      - name: Download videos.json
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: scrape.yml
+          name: videos.json
+          path: .
+      - run: node upload.js

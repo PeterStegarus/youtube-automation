@@ -1,0 +1,27 @@
+name: Scrape
+on:
+  workflow_dispatch:
+jobs:
+  scrape:
+    name: Scrape
+    runs-on: ubuntu-latest
+    env:
+      CATEGORIES: ${{ secrets.CATEGORIES }}
+    steps:
+      - uses: actions/checkout@main
+      - uses: actions/setup-node@main
+        with:
+          node-version: 16
+          cache: 'npm'
+      - run: npm ci
+      - run: node scrape.js
+      - name: Upload videos/*
+        uses: actions/upload-artifact@v3
+        with:
+          name: scraped-videos
+          path: videos/*
+      - name: Upload videos.json
+        uses: actions/upload-artifact@v3
+        with:
+          name: videos.json
+          path: videos.json

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,5 +17,12 @@
   "bugs": {
     "url": "https://github.com/PeterStegarus/youtube-automation/issues"
   },
-  "homepage": "https://github.com/PeterStegarus/youtube-automation#readme"
+  "homepage": "https://github.com/PeterStegarus/youtube-automation#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.0.1",
+    "node-fetch": "^3.2.10",
+    "tiktok-scraper": "^1.4.36"
+  }
 }
