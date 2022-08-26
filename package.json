@@ -23,6 +23,7 @@
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.0.1",
     "node-fetch": "^3.2.10",
-    "tiktok-scraper": "^1.4.36"
+    "tiktok-scraper": "^1.4.36",
+    "youtube-videos-uploader": "^2.0.0"
   }
 }
