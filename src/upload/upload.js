@@ -24,17 +24,22 @@ const uploadVideos = videos.map(video => ({
 }))
 console.log(uploadVideos);
 
-credentials.forEach(credential => {
+for (const credential of credentials) {
+    console.log(`Uploading in category [${credential.category}]`);
     const categoryVideos = uploadVideos.filter(video => video.category == credential.category);
-    upload(credential, categoryVideos)
-        .then(() => {
-            videos.forEach(video => {
-                if (video.category == credential.category) {
-                    video.uploaded = true;
-                }
+    if (categoryVideos.length)
+        await upload(credential, categoryVideos, { headless: false })
+            .then((msg) => {
+                console.log(msg);
+                videos.forEach(video => {
+                    if (video.category == credential.category) {
+                        video.uploaded = true;
+                    }
+                })
             })
-        })
-})
+    else
+        console.log("No new videos");
+}
 
 scrapeData.videos = videos;
 fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
