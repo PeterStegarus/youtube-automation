@@ -27,9 +27,23 @@ jobs:
           workflow: scrape.yml
           name: videos.json
           path: .
-      - run: node src/upload/upload.js
+      - name: Download yt-auth
+        continue-on-error: true
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: upload.yml
+          name: yt-auth
+          path: yt-auth
+      - name: Run upload.js
+        if: success() || failure()
+        run: node src/upload/upload.js
       - name: Upload videos.json
         uses: actions/upload-artifact@v3
         with:
           name: videos.json
           path: videos.json
+      - name: Upload yt-auth
+        uses: actions/upload-artifact@v3
+        with:
+          name: yt-auth
+          path: yt-auth/*
