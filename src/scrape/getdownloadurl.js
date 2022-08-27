@@ -4,7 +4,7 @@ import { stringify } from 'qs'
 
 const getDownloadUrl = url => {
     return new Promise((resolve, reject) => {
-        console.log(`Getting download url for ${url}`);
+        console.log(`Getting download URL for ${url}`);
         Axios.get('https://ttdownloader.com/').then((data) => {
             const $ = load(data.data)
             const cookie = data.headers['set-cookie'].join('')
