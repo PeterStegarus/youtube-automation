@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CREDENTIALS: ${{ secrets.CREDENTIALS }}
-      PUPPETEER_OPTIONS: '{ "headless": false }'
+      PUPPETEER_OPTIONS: '{ "headless": true }'
     steps:
       - uses: actions/checkout@main
       - uses: actions/setup-node@main
