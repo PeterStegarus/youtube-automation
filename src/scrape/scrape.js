@@ -32,8 +32,8 @@ const videos = postsByCategory.flat()
 
 const downloadUrls = [];
 
+// This needs to be done sequentially. Tried using Promise.all but got hit with 503 errors
 for (const video of videos) {
-    await timer(3000);
     const downloadUrl = await getDownloadUrl(video.url);
     downloadUrls.push(downloadUrl)
 }
@@ -44,5 +44,3 @@ await Promise.all(downloadPromises);
 scrapeData.scrapeNumber++;
 scrapeData.videos.push(...videos);
 fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
-
-function timer(ms) { return new Promise(res => setTimeout(res, ms)); }
