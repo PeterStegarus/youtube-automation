@@ -3,6 +3,7 @@ import { load } from 'cheerio'
 import { stringify } from 'qs'
 
 const getDownloadUrl = url => {
+    console.log(`Getting download url for ${url}`);
     return new Promise((resolve, reject) => {
         Axios.get('https://ttdownloader.com/').then((data) => {
             const $ = load(data.data)

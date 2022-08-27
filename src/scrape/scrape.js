@@ -9,6 +9,7 @@ import downloadVideo from './downloadvideo.js';
 const CATEGORIES_NAMES = JSON.parse(process.env.CATEGORIES);
 const SCRAPE_DATA_PATH = './videos.json';
 const SESSIONS_LIST = ['sid_tt=asdasd13123123123adasda;'];
+console.log(CATEGORIES_NAMES);
 
 let scrapeData = { scrapeNumber: 1, videos: [] }
 if (fs.existsSync(SCRAPE_DATA_PATH))

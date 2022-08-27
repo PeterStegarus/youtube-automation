@@ -4,6 +4,7 @@ import * as fs from 'node:fs';
 const DOWNLOAD_DIR = './videos';
 
 async function downloadVideo(url, fileName) {
+    console.log(`Downloading ${url}`);
     if (!fs.existsSync(DOWNLOAD_DIR)) {
         fs.mkdirSync(DOWNLOAD_DIR);
     }
