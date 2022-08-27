@@ -30,8 +30,13 @@ const postsByCategory = metadata
         )));
 const videos = postsByCategory.flat()
 
-const downloadUrlsPromises = videos.map(video => getDownloadUrl(video.url));
-const downloadUrls = await Promise.all(downloadUrlsPromises);
+const downloadUrls = [];
+
+for (const video of videos) {
+    await timer(3000);
+    const downloadUrl = await getDownloadUrl(video.url);
+    downloadUrls.push(downloadUrl)
+}
 
 const downloadPromises = downloadUrls.map((url, index) => downloadVideo(url, videos[index].fileName));
 await Promise.all(downloadPromises);
@@ -39,3 +44,5 @@ await Promise.all(downloadPromises);
 scrapeData.scrapeNumber++;
 scrapeData.videos.push(...videos);
 fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
+
+function timer(ms) { return new Promise(res => setTimeout(res, ms)); }
