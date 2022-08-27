@@ -36,7 +36,7 @@ jobs:
           path: yt-auth
       - name: Run upload.js
         if: success() || failure()
-        run: node src/upload/upload.js
+        run: npm run upload
       - name: Upload videos.json
         uses: actions/upload-artifact@v3
         with:

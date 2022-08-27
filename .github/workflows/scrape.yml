@@ -23,7 +23,7 @@ jobs:
           path: .
       - name: Run scrape.js
         if: success() || failure()
-        run: node src/scrape/scrape.js
+        run: npm run scrape
       - name: Upload videos/*
         uses: actions/upload-artifact@v3
         with:
