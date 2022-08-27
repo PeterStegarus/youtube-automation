@@ -3,8 +3,8 @@ import { load } from 'cheerio'
 import { stringify } from 'qs'
 
 const getDownloadUrl = url => {
-    console.log(`Getting download url for ${url}`);
     return new Promise((resolve, reject) => {
+        console.log(`Getting download url for ${url}`);
         Axios.get('https://ttdownloader.com/').then((data) => {
             const $ = load(data.data)
             const cookie = data.headers['set-cookie'].join('')
@@ -26,6 +26,7 @@ const getDownloadUrl = url => {
             }).then(({ data }) => {
                 const $ = load(data)
                 const result = $('#results-list > div:nth-child(2) > div.download > a')?.attr('href');
+                console.log(result);
                 resolve(result);
             }).catch(e => {
                 reject({ status: false, message: 'error fetch data', e: e.message })
