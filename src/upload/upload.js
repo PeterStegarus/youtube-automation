@@ -25,15 +25,15 @@ for (const credential of CREDENTIALS) {
     console.log(`Uploading ${uploadVideos.length} in category [${credential.category}]`);
     console.log(uploadVideos.map(video => video.path));
 
-    // if (uploadVideos.length) {
-    //     await upload(credential, uploadVideos, PUPPETEER_OPTIONS)
-    //         .then(msg => {
-    //             console.log(msg);
-    //             categoryVideos.forEach(video => video.uploaded = true)
-    //             fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
-    //         })
-    // }
-    // else {
-    //     console.log("No new videos");
-    // }
+    if (uploadVideos.length) {
+        await upload(credential, uploadVideos, PUPPETEER_OPTIONS)
+            .then(msg => {
+                console.log(msg);
+                categoryVideos.forEach(video => video.uploaded = true)
+                fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
+            })
+    }
+    else {
+        console.log("No new videos");
+    }
 }
