@@ -14,6 +14,7 @@ const getDownloadUrl = url => {
                 format: '',
                 token: $('#token').attr('value')
             }
+            console.log('start data post');
             Axios({
                 method: 'POST',
                 url: 'https://ttdownloader.com/query/',
