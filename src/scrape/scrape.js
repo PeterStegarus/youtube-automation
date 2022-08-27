@@ -30,12 +30,10 @@ const postsByCategory = metadata
         )));
 const videos = postsByCategory.flat()
 
+// This needs to be done sequentially. Tried using Promise.all but got hit with http 503 errors
 const downloadUrls = [];
-
-// This needs to be done sequentially. Tried using Promise.all but got hit with 503 errors
 for (const video of videos) {
-    const downloadUrl = await getDownloadUrl(video.url);
-    downloadUrls.push(downloadUrl)
+    downloadUrls.push(await getDownloadUrl(video.url))
 }
 
 const downloadPromises = downloadUrls.map((url, index) => downloadVideo(url, videos[index].fileName));
