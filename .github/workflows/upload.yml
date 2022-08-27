@@ -45,6 +45,7 @@ jobs:
       - name: Run upload.js
         run: npm run upload
       - name: Upload videos.json
+        if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           name: videos.json

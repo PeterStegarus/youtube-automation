@@ -33,6 +33,7 @@ const videos = postsByCategory.flat()
 // This needs to be done sequentially. Tried using Promise.all but got hit with http 503 errors
 const downloadUrls = [];
 for (const video of videos) {
+    console.log(`Getting download URL for category [${video.category}]`);
     downloadUrls.push(await getDownloadUrl(video.url))
 }
 
