@@ -1,6 +1,7 @@
 name: Scrape
 on:
   workflow_dispatch:
+concurrency: 1
 jobs:
   scrape:
     name: Scrape

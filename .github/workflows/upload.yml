@@ -5,6 +5,7 @@ on:
     workflows: ["Scrape"]
     types:
       - completed
+concurrency: 1
 jobs:
   upload:
     name: Upload
