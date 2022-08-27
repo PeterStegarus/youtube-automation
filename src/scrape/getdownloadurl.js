@@ -6,6 +6,7 @@ const getDownloadUrl = url => {
     return new Promise((resolve, reject) => {
         console.log(`Getting download url for ${url}`);
         Axios.get('https://ttdownloader.com/').then((data) => {
+            console.log('fetch data get success');
             const $ = load(data.data)
             const cookie = data.headers['set-cookie'].join('')
             const dataPost = {
@@ -24,6 +25,7 @@ const getDownloadUrl = url => {
                 },
                 data: stringify(dataPost)
             }).then(({ data }) => {
+                console.log('fetch data post success');
                 const $ = load(data)
                 const result = $('#results-list > div:nth-child(2) > div.download > a')?.attr('href');
                 console.log(result);
