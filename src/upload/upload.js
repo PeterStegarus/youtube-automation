@@ -4,42 +4,32 @@ import { upload } from 'youtube-videos-uploader'
 
 const DOWNLOAD_DIR = './videos';
 const SCRAPE_DATA_PATH = './videos.json';
+const CREDENTIALS = JSON.parse(process.env.CREDENTIALS);
+const PUPPETEER_OPTIONS = JSON.parse(process.env.PUPPETEER_OPTIONS);
 
 const scrapeData = JSON.parse(fs.readFileSync(SCRAPE_DATA_PATH));
-console.log(scrapeData);
-
-const files = fs.readdirSync(DOWNLOAD_DIR)
-console.log(files);
 
 const videos = scrapeData.videos.filter(video => video.uploaded == false)
 
-const credentials = JSON.parse(process.env.CREDENTIALS);
+for (const credential of CREDENTIALS) {
+    const categoryVideos = videos.filter(video => video.category == credential.category);
+    const uploadVideos = categoryVideos.map(video => ({
+        path: `${DOWNLOAD_DIR}/${video.fileName}`,
+        title: video.title,
+        description: video.title
+    }))
 
-console.log(credentials);
+    console.log(`Uploading ${uploadVideos.length} in category [${credential.category}]`);
 
-const uploadVideos = videos.map(video => ({
-    path: `${DOWNLOAD_DIR}/${video.fileName}`,
-    title: video.title,
-    description: video.title
-}))
-console.log(uploadVideos);
-
-for (const credential of credentials) {
-    console.log(`Uploading in category [${credential.category}]`);
-    const categoryVideos = uploadVideos.filter(video => video.category == credential.category);
-    if (categoryVideos.length)
-        await upload(credential, categoryVideos, { headless: false })
-            .then((msg) => {
+    if (uploadVideos.length) {
+        await upload(credential, uploadVideos, PUPPETEER_OPTIONS)
+            .then(msg => {
                 console.log(msg);
-                videos.forEach(video => {
-                    if (video.category == credential.category) {
-                        video.uploaded = true;
-                    }
-                })
+                categoryVideos.forEach(video => video.uploaded = true)
+                fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
             })
-    else
+    }
+    else {
         console.log("No new videos");
+    }
 }
-
-scrapeData.videos = videos;
-fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
