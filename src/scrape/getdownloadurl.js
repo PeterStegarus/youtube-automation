@@ -29,10 +29,10 @@ const getDownloadUrl = url => {
                 console.log(result);
                 resolve(result);
             }).catch(e => {
-                reject({ status: false, message: 'error fetch data', e: e.message })
+                reject({ status: false, message: 'error fetch data post', e: e.message })
             })
         }).catch(e => {
-            reject({ status: false, message: 'error fetch data', e: e.message })
+            reject({ status: false, message: 'error fetch data get', e: e.message })
         })
     })
 }
