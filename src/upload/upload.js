@@ -11,6 +11,9 @@ const scrapeData = JSON.parse(fs.readFileSync(SCRAPE_DATA_PATH));
 
 const videos = scrapeData.videos.filter(video => video.uploaded == false)
 
+const dir = fs.readdirSync(DOWNLOAD_DIR);
+console.log(dir);
+
 for (const credential of CREDENTIALS) {
     const categoryVideos = videos.filter(video => video.category == credential.category);
     const uploadVideos = categoryVideos.map(video => ({
@@ -20,16 +23,17 @@ for (const credential of CREDENTIALS) {
     }))
 
     console.log(`Uploading ${uploadVideos.length} in category [${credential.category}]`);
+    console.log(uploadVideos.map(video => video.path));
 
-    if (uploadVideos.length) {
-        await upload(credential, uploadVideos, PUPPETEER_OPTIONS)
-            .then(msg => {
-                console.log(msg);
-                categoryVideos.forEach(video => video.uploaded = true)
-                fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
-            })
-    }
-    else {
-        console.log("No new videos");
-    }
+    // if (uploadVideos.length) {
+    //     await upload(credential, uploadVideos, PUPPETEER_OPTIONS)
+    //         .then(msg => {
+    //             console.log(msg);
+    //             categoryVideos.forEach(video => video.uploaded = true)
+    //             fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
+    //         })
+    // }
+    // else {
+    //     console.log("No new videos");
+    // }
 }
