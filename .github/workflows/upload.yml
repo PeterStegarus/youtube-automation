@@ -8,6 +8,9 @@ jobs:
   upload:
     name: Upload
     runs-on: ubuntu-latest
+    env:
+      CREDENTIALS: ${{ secrets.CREDENTIALS }}
+      PUPPETEER_OPTIONS: '{ "headless": false }'
     steps:
       - uses: actions/checkout@main
       - uses: actions/setup-node@main
