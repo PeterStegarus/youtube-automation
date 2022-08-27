@@ -19,18 +19,6 @@ jobs:
           node-version: 16
           cache: 'npm'
       - run: npm ci
-      - name: Download videos
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: scrape.yml
-          name: scraped-videos
-          path: videos
-      - name: Download videos.json
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: scrape.yml
-          name: videos.json
-          path: .
       - name: Download yt-auth from previous run
         id: prev-yt-auth
         continue-on-error: true
@@ -41,7 +29,19 @@ jobs:
           path: yt-auth
       - name: Download backup yt-auth
         if: steps.prev-yt-auth.outcome != 'success'
-        run: curl https://data.atonline.net/\~jwt/eyJhY3QiOiJnZXQiLCJpbiI6eyJkbCI6dHJ1ZX0sIm1pbWUiOiJhcHBsaWNhdGlvbi94LXppcC1jb21wcmVzc2VkIiwicCI6ImJsb2JzcmMvYmxvYnMtZnR1cGkyLWF4dGYtZXczbC10eWVzLWQyamt0MmVlIn0/yt-auth.zip\?v\=1\&u\=phplatform\&e\=1661609327\&s\=_svkhP2Ujy34fv3gqeiI06gGzFVMlT2GI8q-jI7s0XE -o yt-auth.zip && ls yt-auth.zip && unzip yt-auth.zip -d yt-auth
+        run: curl https://data.atonline.net/~jwt/eyJhY3QiOiJnZXQiLCJpbiI6eyJkbCI6dHJ1ZX0sIm1pbWUiOiJhcHBsaWNhdGlvbi94LXppcC1jb21wcmVzc2VkIiwicCI6ImJsb2JzcmMvYmxvYnMtZnR1cGkyLWF4dGYtZXczbC10eWVzLWQyamt0MmVlIn0/yt-auth.zip?v=1&u=phplatform&e=1661611597&s=pUn7TQTqwjLkTGlz0oN98ISJmiPifpmvpSWUjnCWbo8 -o yt-auth.zip && ls yt-auth.zip && unzip yt-auth.zip -d yt-auth
+      - name: Download videos.json
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: scrape.yml
+          name: videos.json
+          path: .
+      - name: Download videos
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: scrape.yml
+          name: scraped-videos
+          path: videos
       - name: Run upload.js
         run: npm run upload
       - name: Upload videos.json
