@@ -29,12 +29,18 @@ for (const credential of CREDENTIALS) {
     console.log(uploadVideos.map(video => video.path));
 
     if (uploadVideos.length) {
-        await upload(credential, uploadVideos, PUPPETEER_OPTIONS)
-            .then(msg => {
+        let attempts = 3;
+        while (attempts) {
+            try {
+                const msg = await upload(credential, uploadVideos, PUPPETEER_OPTIONS)
                 console.log(msg);
                 categoryVideos.forEach(video => video.uploaded = true)
                 fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
-            })
+            } catch (e) {
+                console.log(e);
+                attempts--;
+            }
+        }
     }
     else {
         console.log("No new videos");
