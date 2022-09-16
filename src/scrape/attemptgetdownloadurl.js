@@ -1,20 +1,20 @@
 import getDownloadUrl from './getdownloadurl.js'
+const MAX_ATTEMPTS = 5
 
 const attemptGetDownloadUrl = async video => {
     if (video.attempts === undefined) video.attempts = 1;
 
-    while (video.attempts < 5) {
+    while (video.attempts <= MAX_ATTEMPTS) {
         console.log(`Category [${video.category}], attempt [${video.attempts}]:`);
-        await getDownloadUrl(video.url)
-            .then(url => {
-                console.log("success");
-                video.attempts = undefined;
-                return url;
-            })
-            .catch(e => {
-                console.log(e.message);
-                video.attempts++;
-            });
+        try {
+            const downloadUrl = await getDownloadUrl(video.url);
+            video.attempts = undefined;
+            console.log("success");
+            return downloadUrl;
+        } catch (e) {
+            console.log(e.message);
+            video.attempts++;
+        }
     }
 
     video.attempts = undefined;
