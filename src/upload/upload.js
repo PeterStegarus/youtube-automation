@@ -7,12 +7,15 @@ const SCRAPE_DATA_PATH = './videos.json';
 const CREDENTIALS = JSON.parse(process.env.CREDENTIALS);
 const PUPPETEER_OPTIONS = JSON.parse(process.env.PUPPETEER_OPTIONS);
 
+const dir = fs.readdirSync(DOWNLOAD_DIR);
+
 const scrapeData = JSON.parse(fs.readFileSync(SCRAPE_DATA_PATH));
+scrapeData.videos.forEach(video => {
+    if (!dir.includes(video.fileName))
+        video.uploaded = true
+});
 
 const videos = scrapeData.videos.filter(video => video.uploaded == false)
-
-const dir = fs.readdirSync(DOWNLOAD_DIR);
-console.log(dir);
 
 for (const credential of CREDENTIALS) {
     const categoryVideos = videos.filter(video => video.category == credential.category);
