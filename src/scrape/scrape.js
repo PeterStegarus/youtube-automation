@@ -32,14 +32,27 @@ const videos = postsByCategory.flat()
 
 // This needs to be done sequentially. Tried using Promise.all but got hit with http 503 errors
 const downloadUrls = [];
-for (const video of videos) {
-    console.log(`Category [${video.category}]:`);
-    downloadUrls.push(await getDownloadUrl(video.url))
+while (videos.length) {
+    const video = videos.pop();
+    if (video.attempts === undefined) video.attempts = 1;
+    if (video.attempts > 1) continue;
+
+    console.log(`Category [${video.category}], attempt [${video.attempts}]:`);
+    await getDownloadUrl(video.url)
+        .then(url => {
+            console.log("success");
+            downloadUrls.push(url)
+        })
+        .catch(e => {
+            console.log(e.message);
+            videos.push(video)
+            video.attempts++;
+        });
 }
 
 const downloadPromises = downloadUrls.map((url, index) => downloadVideo(url, videos[index].fileName));
 await Promise.all(downloadPromises);
 
 scrapeData.scrapeNumber++;
-scrapeData.videos.push(...videos);
+scrapeData.videos.push(...videos.map(video => video.attempts = undefined));
 fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');

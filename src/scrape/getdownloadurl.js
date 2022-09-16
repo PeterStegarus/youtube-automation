@@ -15,7 +15,7 @@ const getDownloadUrl = url => {
             }
             Axios({
                 method: 'POST',
-                url: 'https://ttdownloader.com/query/',
+                url: 'https://ttdownloader.com/search/',
                 headers: {
                     'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
                     origin: 'https://ttdownloader.com',
@@ -26,7 +26,12 @@ const getDownloadUrl = url => {
             }).then(({ data }) => {
                 const $ = load(data)
                 const result = $('#results-list > div:nth-child(2) > div.download > a')?.attr('href');
-                resolve(result);
+                if (result !== null && result !== undefined) {
+                    resolve(result);
+                }
+                else {
+                    reject({ status: false, message: 'undefined url' });
+                }
             }).catch(e => {
                 reject({ status: false, message: 'error fetch data post', e: e.message })
             })
