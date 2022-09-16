@@ -3,8 +3,8 @@ import { hashtag } from 'tiktok-scraper';
 import * as fs from 'node:fs';
 
 import Video from '../models/video.js'
-import getDownloadUrl from './getdownloadurl.js'
 import downloadVideo from './downloadvideo.js';
+import attemptGetDownloadUrl from './attemptgetdownloadurl.js';
 
 const CATEGORIES_NAMES = JSON.parse(process.env.CATEGORIES);
 const SCRAPE_DATA_PATH = './videos.json';
@@ -32,27 +32,14 @@ const videos = postsByCategory.flat()
 
 // This needs to be done sequentially. Tried using Promise.all but got hit with http 503 errors
 const downloadUrls = [];
-while (videos.length) {
-    const video = videos.pop();
-    if (video.attempts === undefined) video.attempts = 1;
-    if (video.attempts > 1) continue;
-
-    console.log(`Category [${video.category}], attempt [${video.attempts}]:`);
-    await getDownloadUrl(video.url)
-        .then(url => {
-            console.log("success");
-            downloadUrls.push(url)
-        })
-        .catch(e => {
-            console.log(e.message);
-            videos.push(video)
-            video.attempts++;
-        });
+for (const video of videos) {
+    const url = await attemptGetDownloadUrl(video);
+    downloadUrls.push(url);
 }
 
 const downloadPromises = downloadUrls.map((url, index) => downloadVideo(url, videos[index].fileName));
 await Promise.all(downloadPromises);
 
 scrapeData.scrapeNumber++;
-scrapeData.videos.push(...videos.map(video => video.attempts = undefined));
+scrapeData.videos.push(...videos);
 fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
