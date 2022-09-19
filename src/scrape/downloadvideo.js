@@ -8,19 +8,21 @@ async function downloadVideo(url, fileName) {
         return;
     }
 
-    console.log(`Downloading ${url}`);
+    console.log(`${fileName} - Downloading: ${url}`);
     if (!fs.existsSync(DOWNLOAD_DIR)) {
         fs.mkdirSync(DOWNLOAD_DIR);
     }
 
     const path = `${DOWNLOAD_DIR}/${fileName}`;
 
-    const response = await fetch(url);
-    const arrayBuffer = await response.arrayBuffer();
-
-    fs.writeFile(path, Buffer.from(arrayBuffer), (err) => {
-        if (err) console.log(err);
-    });
+    try {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        fs.writeFileSync(path, Buffer.from(arrayBuffer));
+        console.log(`${fileName}: Success`);
+    } catch (e) {
+        console.log(`${fileName}: Skipped`);
+    }
 }
 
 export default downloadVideo

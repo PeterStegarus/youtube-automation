@@ -56,6 +56,11 @@ jobs:
         with:
           name: scraped-videos
           path: videos/*
+      - name: Upload sss/*
+        uses: actions/upload-artifact@v3
+        with:
+          name: sss
+          path: sss/*
       - name: Upload yt-auth
         uses: actions/upload-artifact@v3
         with:

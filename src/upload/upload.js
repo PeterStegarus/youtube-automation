@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import * as fs from 'node:fs';
-import { upload } from 'youtube-videos-uploader'
+import { upload } from 'youtube-vids-uploader'
 
 const DOWNLOAD_DIR = './videos';
 const SCRAPE_DATA_PATH = './videos.json';
@@ -18,6 +18,11 @@ scrapeData.videos.forEach(video => {
 
 const videos = scrapeData.videos.filter(video => video.uploaded == false)
 
+
+if (!fs.existsSync('sss')) {
+    fs.mkdirSync('sss');
+}
+
 for (const credential of CREDENTIALS) {
     const categoryVideos = videos.filter(video => video.category == credential.category);
     const uploadVideos = categoryVideos.map(video => ({
@@ -30,11 +35,11 @@ for (const credential of CREDENTIALS) {
 
     if (uploadVideos.length) {
         console.log(uploadVideos.map(video => video.path));
-        console.log(await upload(credential, uploadVideos, PUPPETEER_OPTIONS));
 
         let attempts = UPLOAD_ATTEMPTS;
         while (attempts) {
             try {
+                console.log(await upload(credential, uploadVideos, PUPPETEER_OPTIONS));
                 categoryVideos.forEach(video => video.uploaded = true)
                 uploadVideos.forEach(video => fs.unlinkSync(video.path));
                 fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
