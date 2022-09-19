@@ -5,7 +5,7 @@ import { upload } from 'youtube-vids-uploader'
 const DOWNLOAD_DIR = './videos';
 const SCRAPE_DATA_PATH = './videos.json';
 const CREDENTIALS = JSON.parse(process.env.CREDENTIALS);
-const UPLOAD_ATTEMPTS = 2;
+const UPLOAD_ATTEMPTS = 1;
 const PUPPETEER_OPTIONS = JSON.parse(process.env.PUPPETEER_OPTIONS);
 
 const dir = fs.readdirSync(DOWNLOAD_DIR);
@@ -36,8 +36,8 @@ for (const credential of CREDENTIALS) {
     if (uploadVideos.length) {
         console.log(uploadVideos.map(video => video.path));
 
-        let attempts = UPLOAD_ATTEMPTS;
-        while (attempts) {
+        let attempts = 1;
+        while (attempts <= UPLOAD_ATTEMPTS) {
             try {
                 console.log(await upload(credential, uploadVideos, PUPPETEER_OPTIONS));
                 categoryVideos.forEach(video => video.uploaded = true)
@@ -46,7 +46,7 @@ for (const credential of CREDENTIALS) {
                 break;
             } catch (e) {
                 console.log(`${credential.category}: ${e.message} - Attempt ${attempts} / ${UPLOAD_ATTEMPTS}`);
-                attempts--;
+                attempts++;
             }
         }
     }

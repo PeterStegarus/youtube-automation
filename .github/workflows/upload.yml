@@ -28,9 +28,9 @@ jobs:
           workflow: upload.yml
           name: yt-auth
           path: yt-auth
-      - name: Download backup yt-auth
+      - name: Download fallback yt-auth
         if: steps.prev-yt-auth.outcome != 'success'
-        run: curl 'https://data.atonline.net/~jwt/eyJhY3QiOiJnZXQiLCJpbiI6eyJkbCI6dHJ1ZX0sIm1pbWUiOiJhcHBsaWNhdGlvbi94LXppcC1jb21wcmVzc2VkIiwicCI6ImJsb2JzcmMvYmxvYnMtZnR1cGkyLWF4dGYtZXczbC10eWVzLWQyamt0MmVlIn0/yt-auth.zip?v=1&u=phplatform&e=1661611597&s=pUn7TQTqwjLkTGlz0oN98ISJmiPifpmvpSWUjnCWbo8' -o yt-auth.zip && ls yt-auth.zip && unzip yt-auth.zip -d yt-auth
+        run: curl -L '${{ secrets.FALLBACK_YTAUTH }}' -o yt-auth.zip && ls yt-auth.zip && unzip yt-auth.zip -d yt-auth
       - name: Download videos.json
         uses: dawidd6/action-download-artifact@v2
         with:
