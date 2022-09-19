@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import * as fs from 'node:fs';
-import { upload } from 'youtube-vids-uploader'
+import { upload } from 'youtube-videos-uploader'
 
 const DOWNLOAD_DIR = './videos';
 const SCRAPE_DATA_PATH = './videos.json';
