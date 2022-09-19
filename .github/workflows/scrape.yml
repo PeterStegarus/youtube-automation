@@ -22,6 +22,13 @@ jobs:
           workflow: upload.yml
           name: videos.json
           path: .
+      - name: Download videos
+        continue-on-error: true
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: upload.yml
+          name: scraped-videos
+          path: videos
       - name: Run scrape.js
         if: success() || failure()
         run: npm run scrape
