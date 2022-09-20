@@ -18,11 +18,6 @@ scrapeData.videos.forEach(video => {
 
 const videos = scrapeData.videos.filter(video => video.uploaded == false)
 
-
-if (!fs.existsSync('sss')) {
-    fs.mkdirSync('sss');
-}
-
 for (const credential of CREDENTIALS) {
     const categoryVideos = videos.filter(video => video.category == credential.category);
     const uploadVideos = categoryVideos.map(video => ({
