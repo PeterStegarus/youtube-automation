@@ -1,5 +1,5 @@
 import getDownloadUrl from './getdownloadurl.js'
-const MAX_ATTEMPTS = 5
+const MAX_ATTEMPTS = process.env.DOWNLOAD_ATTEMPTS
 
 const attemptGetDownloadUrl = async video => {
     if (video.attempts === undefined) video.attempts = 1;

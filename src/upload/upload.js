@@ -1,12 +1,14 @@
 import 'dotenv/config'
 import * as fs from 'node:fs';
-import { upload } from 'youtube-vids-uploader'
+import { upload, comment } from 'youtube-vids-uploader'
 
 const DOWNLOAD_DIR = './videos';
 const SCRAPE_DATA_PATH = './videos.json';
 const CREDENTIALS = JSON.parse(process.env.CREDENTIALS);
-const UPLOAD_ATTEMPTS = 1;
+const UPLOAD_ATTEMPTS = process.env.UPLOAD_ATTEMPTS;
 const PUPPETEER_OPTIONS = JSON.parse(process.env.PUPPETEER_OPTIONS);
+const DESCRIPTION_FOOTER = process.env.DESCRIPTION_FOOTER
+const AFFILIATE_LINKS = JSON.parse(process.env.AFFILIATE_LINKS)
 
 const dir = fs.readdirSync(DOWNLOAD_DIR);
 
@@ -19,18 +21,27 @@ scrapeData.videos.forEach(video => {
 const videos = scrapeData.videos.filter(video => video.uploaded == false)
 
 for (const credential of CREDENTIALS) {
+    const affiliateLinks = [Math.random(), Math.random(), Math.random()]
+        .map(random => Math.floor(random * AFFILIATE_LINKS.length))
+        .map(index => AFFILIATE_LINKS[index])
+        .join('\n\n');
+
     const categoryVideos = videos.filter(video => video.category == credential.category);
     const uploadVideos = categoryVideos.map(video => {
+        const description = `${affiliateLinks}\n\n${video.title}\n\n${DESCRIPTION_FOOTER}`
+
         const uploadVideo = {
             path: `${DOWNLOAD_DIR}/${video.fileName}`,
             title: video.title,
-            description: video.title
+            description: description
         }
 
         uploadVideo.onSuccess = () => {
             console.log(`${uploadVideo.path} - Success`);
+
             video.uploaded = true;
             fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
+
             fs.unlinkSync(uploadVideo.path);
             uploadVideo.path = null;
         }
@@ -46,7 +57,10 @@ for (const credential of CREDENTIALS) {
         let attempts = 1;
         while (attempts <= UPLOAD_ATTEMPTS) {
             try {
-                console.log(await upload(credential, uploadVideos.filter(video => video.path !== null), PUPPETEER_OPTIONS));
+                const urls = await upload(credential, uploadVideos.filter(video => video.path !== null), PUPPETEER_OPTIONS);
+                console.log(urls);
+                const comm = urls.map(url => ({ link: url, comment: affiliateLinks }));
+                await comment(credential, comm).then(console.log());
                 break;
             } catch (e) {
                 console.log(`${credential.category}: ${e.message} - Attempt ${attempts} / ${UPLOAD_ATTEMPTS}`);
@@ -55,6 +69,6 @@ for (const credential of CREDENTIALS) {
         }
     }
     else {
-        console.log("No new videos");
+        console.log('No new videos');
     }
 }
