@@ -24,6 +24,7 @@ for (const credential of CREDENTIALS) {
     const affiliateLinks = [Math.random(), Math.random(), Math.random()]
         .map(random => Math.floor(random * AFFILIATE_LINKS.length))
         .map(index => AFFILIATE_LINKS[index])
+        .map(link => `${link.title} - ${link.url}`)
         .join('\n\n');
 
     const categoryVideos = videos.filter(video => video.category == credential.category);
@@ -59,8 +60,8 @@ for (const credential of CREDENTIALS) {
             try {
                 const urls = await upload(credential, uploadVideos.filter(video => video.path !== null), PUPPETEER_OPTIONS);
                 console.log(urls);
-                const comm = urls.map(url => ({ link: url, comment: affiliateLinks }));
-                await comment(credential, comm).then(console.log());
+                const comments = urls.map(url => ({ link: url.replace('shorts/', 'watch?v='), comment: affiliateLinks }));
+                await comment(credential, comments).then(console.log());
                 break;
             } catch (e) {
                 console.log(`${credential.category}: ${e.message} - Attempt ${attempts} / ${UPLOAD_ATTEMPTS}`);
