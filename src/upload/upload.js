@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import * as fs from 'node:fs';
-import { upload, comment } from 'youtube-vids-uploader'
+import { upload as youtubeUpload, comment } from 'youtube-vids-uploader'
 
 const DOWNLOAD_DIR = './videos';
 const SCRAPE_DATA_PATH = './videos.json';
@@ -10,66 +10,74 @@ const PUPPETEER_OPTIONS = JSON.parse(process.env.PUPPETEER_OPTIONS);
 const DESCRIPTION_FOOTER = process.env.DESCRIPTION_FOOTER
 const AFFILIATE_LINKS = JSON.parse(process.env.AFFILIATE_LINKS)
 
-const dir = fs.readdirSync(DOWNLOAD_DIR);
 
-const scrapeData = JSON.parse(fs.readFileSync(SCRAPE_DATA_PATH));
-scrapeData.videos.forEach(video => {
-    if (!dir.includes(video.fileName))
-        video.uploaded = true
-});
+async function upload(maxCount) {
+    const dir = fs.readdirSync(DOWNLOAD_DIR);
 
-const videos = scrapeData.videos.filter(video => video.uploaded == false)
+    const scrapeData = JSON.parse(fs.readFileSync(SCRAPE_DATA_PATH));
+    scrapeData.videos.forEach(video => {
+        if (!dir.includes(video.fileName))
+            video.uploaded = true
+    });
 
-for (const credential of CREDENTIALS) {
-    const affiliateLinks = [Math.random(), Math.random(), Math.random()]
-        .map(random => Math.floor(random * AFFILIATE_LINKS.length))
-        .map(index => AFFILIATE_LINKS[index])
-        .map(link => `${link.title} - ${link.url}`)
-        .join('\n\n');
+    const videos = scrapeData.videos.filter(video => video.uploaded == false)
 
-    const categoryVideos = videos.filter(video => video.category == credential.category);
-    const uploadVideos = categoryVideos.map(video => {
-        const description = `${affiliateLinks}\n\n${video.title}\n\n${DESCRIPTION_FOOTER}`
+    for (const credential of CREDENTIALS) {
+        const affiliateLinks = [Math.random(), Math.random(), Math.random()]
+            .map(random => Math.floor(random * AFFILIATE_LINKS.length))
+            .map(index => AFFILIATE_LINKS[index])
+            .map(link => `${link.title} - ${link.url}`)
+            .join('\n\n');
 
-        const uploadVideo = {
-            path: `${DOWNLOAD_DIR}/${video.fileName}`,
-            title: video.title,
-            description: description
-        }
+        const categoryVideos = videos
+            .filter(video => video.category == credential.category)
+            .slice(0, maxCount);
+        const uploadVideos = categoryVideos.map(video => {
+            const description = `${affiliateLinks}\n\n${video.title}\n\n${DESCRIPTION_FOOTER}`
 
-        uploadVideo.onSuccess = () => {
-            console.log(`${uploadVideo.path} - Success`);
+            const uploadVideo = {
+                path: `${DOWNLOAD_DIR}/${video.fileName}`,
+                title: video.title,
+                description: description
+            }
 
-            video.uploaded = true;
-            fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
+            uploadVideo.onSuccess = () => {
+                console.log(`${uploadVideo.path} - Success`);
 
-            fs.unlinkSync(uploadVideo.path);
-            uploadVideo.path = null;
-        }
+                video.uploaded = true;
+                fs.writeFileSync(SCRAPE_DATA_PATH, JSON.stringify(scrapeData), 'utf8');
 
-        return uploadVideo;
-    })
+                fs.unlinkSync(uploadVideo.path);
+                uploadVideo.path = null;
+            }
 
-    console.log(`Uploading ${uploadVideos.length} in category [${credential.category}]`);
+            return uploadVideo;
+        })
 
-    if (uploadVideos.length) {
-        console.log(uploadVideos.map(video => video.path));
+        console.log(`Uploading ${uploadVideos.length} in category [${credential.category}]`);
 
-        let attempts = 1;
-        while (attempts <= UPLOAD_ATTEMPTS) {
-            try {
-                const urls = await upload(credential, uploadVideos.filter(video => video.path !== null), PUPPETEER_OPTIONS);
-                console.log(urls);
-                const comments = urls.map(url => ({ link: url.replace('shorts/', 'watch?v='), comment: affiliateLinks }));
-                await comment(credential, comments).then(console.log());
-                break;
-            } catch (e) {
-                console.log(`${credential.category}: ${e.message} - Attempt ${attempts} / ${UPLOAD_ATTEMPTS}`);
-                attempts++;
+        if (uploadVideos.length) {
+            console.log(uploadVideos.map(video => video.path));
+
+            let attempts = 1;
+            while (attempts <= UPLOAD_ATTEMPTS) {
+                try {
+                    const urls = await youtubeUpload(credential, uploadVideos.filter(video => video.path !== null), PUPPETEER_OPTIONS);
+                    console.log(urls);
+                    const comments = urls.map(url => ({ link: url.replace('shorts/', 'watch?v='), comment: affiliateLinks, pin: true }));
+                    const commentsResult = await comment(credential, comments, PUPPETEER_OPTIONS).then(console.log());
+                    console.log(commentsResult);
+                    break;
+                } catch (e) {
+                    console.log(`${credential.category}: ${e.message} - Attempt ${attempts} / ${UPLOAD_ATTEMPTS}`);
+                    attempts++;
+                }
             }
         }
-    }
-    else {
-        console.log('No new videos');
+        else {
+            console.log('No new videos');
+        }
     }
 }
+
+export default upload

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "scrape": "node src/scrape/scrape.js",
-    "upload": "node src/upload/upload.js"
+    "upload-one": "node src/upload/uploadone.js"
   },
   "repository": {
     "type": "git",
