@@ -26,6 +26,6 @@
     "node-fetch": "^3.2.10",
     "tiktok-scraper": "^1.4.36",
     "youtube-videos-uploader": "^2.0.0",
-    "youtube-vids-uploader": "^2.5.3"
+    "youtube-vids-uploader": "^2.6.0"
   }
 }
