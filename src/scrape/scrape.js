@@ -9,6 +9,7 @@ import attemptGetDownloadUrl from './attemptgetdownloadurl.js';
 const CATEGORIES_NAMES = JSON.parse(process.env.CATEGORIES);
 const SCRAPE_DATA_PATH = './videos.json';
 const SESSIONS_LIST = ['sid_tt=asdasd13123123123adasda;'];
+const invalidCharacters = '/[<>]/g';
 
 let scrapeData = { scrapeNumber: 1, videos: [] }
 if (fs.existsSync(SCRAPE_DATA_PATH))
@@ -24,7 +25,7 @@ const postsByCategory = metadata
         .filter(post => !scrapeData.videos.some(video => video.id == post.id))
         .map(post => new Video(
             post.id,
-            post.text,
+            post.text.replace(invalidCharacters, ''),
             CATEGORIES_NAMES[index],
             post.webVideoUrl
         )));
