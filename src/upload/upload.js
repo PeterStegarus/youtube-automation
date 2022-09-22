@@ -9,7 +9,7 @@ const UPLOAD_ATTEMPTS = process.env.UPLOAD_ATTEMPTS;
 const PUPPETEER_OPTIONS = JSON.parse(process.env.PUPPETEER_OPTIONS);
 const DESCRIPTION_FOOTER = process.env.DESCRIPTION_FOOTER
 const AFFILIATE_LINKS = JSON.parse(process.env.AFFILIATE_LINKS)
-
+const messageTransport = { log: (_) => { }, userAction: console.log }
 
 async function upload(maxCount) {
     const dir = fs.readdirSync(DOWNLOAD_DIR);
@@ -62,7 +62,7 @@ async function upload(maxCount) {
             let attempts = 1;
             while (attempts <= UPLOAD_ATTEMPTS) {
                 try {
-                    const urls = await youtubeUpload(credential, uploadVideos.filter(video => video.path !== null), PUPPETEER_OPTIONS);
+                    const urls = await youtubeUpload(credential, uploadVideos.filter(video => video.path !== null), PUPPETEER_OPTIONS, messageTransport);
                     console.log(urls);
                     const comments = urls.map(url => ({ link: url.replace('shorts/', 'watch?v='), comment: affiliateLinks, pin: true }));
                     const commentsResult = await comment(credential, comments, PUPPETEER_OPTIONS).then(console.log());
