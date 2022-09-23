@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "scrape": "node src/scrape/scrape.js",
+    "scrape-one": "node src/scrape/scrapeone.js",
     "upload-one": "node src/upload/uploadone.js"
   },
   "repository": {
