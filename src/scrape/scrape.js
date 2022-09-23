@@ -6,7 +6,7 @@ import Video from '../models/video.js'
 import downloadVideo from './downloadvideo.js';
 import attemptGetDownloadUrl from './attemptgetdownloadurl.js';
 
-const CATEGORIES_NAMES = JSON.parse(process.env.CATEGORIES);
+const CATEGORIES = JSON.parse(process.env.CREDENTIALS).map(credential => credential.category);
 const SCRAPE_DATA_PATH = './videos.json';
 const SESSIONS_LIST = ['sid_tt=asdasd13123123123adasda;'];
 const invalidCharacters = '/[<>]/g';
@@ -17,7 +17,7 @@ if (fs.existsSync(SCRAPE_DATA_PATH))
 
 const scrapeOptions = { number: scrapeData.scrapeNumber, sessionList: SESSIONS_LIST }
 
-const metadataPromises = CATEGORIES_NAMES.map(category => hashtag(category, scrapeOptions));
+const metadataPromises = CATEGORIES.map(category => hashtag(category, scrapeOptions));
 const metadata = (await Promise.all(metadataPromises)).map(category => category.collector);
 
 const postsByCategory = metadata
@@ -26,7 +26,7 @@ const postsByCategory = metadata
         .map(post => new Video(
             post.id,
             post.text.replace(invalidCharacters, ''),
-            CATEGORIES_NAMES[index],
+            CATEGORIES[index],
             post.webVideoUrl
         )));
 const videos = postsByCategory.flat()
