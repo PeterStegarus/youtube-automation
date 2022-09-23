@@ -9,7 +9,7 @@ import attemptGetDownloadUrl from './attemptgetdownloadurl.js';
 const CATEGORIES = JSON.parse(process.env.CREDENTIALS).map(credential => credential.category);
 const SCRAPE_DATA_PATH = './videos.json';
 const SESSIONS_LIST = ['sid_tt=asdasd13123123123adasda;'];
-const invalidCharacters = '/[<>]/g';
+const invalidCharacters = /[<>]/g;
 
 export default async () => {
     let scrapeData = { scrapeNumber: 1, videos: [] }
